@@ -1,1 +1,29 @@
+name: Business Dashboards Relay
 
+on:
+  workflow_dispatch: # Allows triggering via cron-job.org webhook
+
+jobs:
+  relay_dashboards:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install slack_sdk requests
+
+      - name: Run Business Dashboard Relay Script
+        env:
+          SLACK_TOKEN: ${{ secrets.SLACK_TOKEN }}
+          SLACK_CHANNEL_ID: ${{ secrets.SLACK_CHANNEL_ID }}
+          GROWTH_CHANNEL_ID: ${{ secrets.GROWTH_CHANNEL_ID }}
+        run: python snapshot_biz.py
